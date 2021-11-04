@@ -12,7 +12,7 @@ E_node = _getenv(ptrEnv, ptrN);
 
 if (E_node == NULL)
 {
-ptr = _genEnv(ptrN, ptrV);
+ptr = _getenv(ptrN, ptrV);
 _AddNodeEnd(&ptrEnv, ptr);
 free(ptr);
 }
@@ -43,7 +43,6 @@ void _cDir(server_t *ptrData)
 		_strcmp(ptrData->argument[1], "~/") == 0
 	)
 		_cDHome(ptrData, cD);
-	/* Old path */
 	else if (_strcmp(ptrData->argument[1], "-") == 0)
 		_cD_prev(ptrData, cD);
 	else
