@@ -94,7 +94,6 @@ i++;
 }
 strucptr->buff[i] = '\0';
 }
-
 void (*getFunc(char *ptrcmd))(server_t *)
 {
 int i = 0;

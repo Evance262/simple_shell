@@ -15,6 +15,7 @@
 extern char **environ;
 
 /**
+ * serverEnv_s - environment variable
  * @PathName: environment name 
  * @widepath: global path
  * @next: points to the next node
