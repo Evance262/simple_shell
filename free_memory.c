@@ -48,19 +48,68 @@ ptr[i] = NULL;
 free(ptr);
 }
 
-void freeList(serverEnv_t *HeadNode)
+void freeList(serverEnv_t *ptrHeadNode)
 {
-if (HeadNode == NULL)
+if (ptrHeadNode == NULL)
 return;
 
-freeList(HeadNode->next);
-free(HeadNode->pathName);
-HeadNode->pathName = NULL;
+freeList(ptrHeadNode->next);
+free(ptrHeadNode->pathName);
+ptrHeadNode->pathName = NULL;
+free(ptrHeadNode->value);
+ptrHeadNode->value = NULL;
+free(ptrHeadNode->globPath);
+ptrHeadNode->globPath = NULL;
+free(ptrHeadNode);
+}
 
-free(HeadNode->value);
-HeadNode->value = NULL;
 
-free(HeadNode->globPath);
-HeadNode->globPath = NULL;
-free(HeadNode);
+/**
+ * _absolute - return absolute path of a command
+ *@ptrData: app data structure
+ *
+ * Return: absolute path
+ */
+char *_absolute(server_t *ptrData)
+{
+	char **pList, *abs;
+	struct stat st;
+	int iloop = 0;
+
+	if (
+		ptrData->cmdName[0] == '.' &&
+		ptrData->cmdName[1] == '/' &&
+		stat(ptrData->cmdName, &st) == 0
+	)
+		return (ptrData->cmdName);
+
+	pList = _parse(ptrData);
+
+	if (pList == NULL)
+		return (NULL);
+
+	while (pList[iloop] != NULL)
+	{
+		abs = _genAbs(pList[iloop], ptrData->cmdName);
+
+	
+		if (stat(abs, &st) == 0)
+		{
+			freeArgument(pList);
+			return (abs);
+		}
+		free(abs);
+		iloop++;
+	}
+	freeArgument(pList);
+
+	
+	if (stat(ptrData->cmdName, &st) == 0)
+	{
+		return (ptrData->cmdName);
+	}
+	else
+		_Error(ptrData, 101);
+
+	return (NULL);
 }

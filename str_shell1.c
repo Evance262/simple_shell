@@ -33,13 +33,12 @@ return (dest);
 
 int _strcmp(char *str1, char *str2)
 {
-int len = 0;
+int len;
 
-while(str1[len] != '\0')
+for (len = 0; str1[len] != '\0'; len++)
 {
 if (str1[len] - str2[len] != 0)
 return (str1[len] - str2[len]);
-len++;
 }
 return (0);
 }
@@ -67,24 +66,22 @@ return(_strlen(str + 1) + 1);
  * Return: returns a pointer to a null-terminated byte string
  */
 
-char *_strdup(char *str)
+char *_strdup(char *Dupstr)
 {
-int i = 0;
-char *c;
+int i;
+char *ptrstr;
 
-if (str == NULL)
+if (Dupstr == NULL)
 return (NULL);
 
-c = malloc(sizeof(char) * (_strlen(str) + 1));
-if (c == NULL)
+ptrstr = malloc(sizeof(char) * (_strlen(Dupstr) + 1));
+if (ptrstr == NULL)
 return (NULL);
 
-while (i < _strlen(str) + 1)
-{
-c[i] = str[i];
-i++;
-}
-return (str);
+for (i = 0; i < _strlen(Dupstr) + 1; i++)
+ptrstr[i] = Dupstr[i];
+
+return (ptrstr);
 }
 
 /**
@@ -96,7 +93,7 @@ return (str);
  * Return: a character pointer with the copied string
  */
 
-char * my_strcpy(char *dest, char *src)
+char *_strcpy(char *dest, char *src)
 {
 int i = 0, s = _strlen(src);
 

@@ -20,6 +20,7 @@ _printEnviron(_Env->next);
 
 /**
  * _Environ - prints the environ variable
+ *
  * @ptr: data structure
  */
 
@@ -28,44 +29,67 @@ void _Environ(server_t *ptr)
 _printEnviron(ptr->env);
 }
 
-serverEnv_t *_getenv(serverEnv_t *EnvHead, char *ptrName)
+/**
+ * _getenv - get environ variable
+ * @ptrEnv: head node
+ * @ptrName: variable name
+ *
+ * return: variable node
+ */
+
+serverEnv_t *_getenv(serverEnv_t *ptrEnv, char *ptrName)
 {
-if (EnvHead == NULL)
+if (ptrEnv == NULL)
 return (NULL);
 
-if (_strcmp(EnvHead->pathName, ptrName) == 0)
-return (EnvHead);
+if (_strcmp(ptrEnv->pathName, ptrName) == 0)
+return (ptrEnv);
 
-return (_getenv(EnvHead->next, ptrName));
+return (_getenv(ptrEnv->next, ptrName));
 }
+
+/**
+ * _EnvName - Returns the environ name
+ * @ptrVar: Name
+ *
+ * Return: Environ name
+ */
 
 char *_EnvName(char *ptrvar)
 {
-char **ptr, *name;
+char **tptr, *name;
 
-ptr = _strtow(ptrvar, "=", NULL);
+tptr = _strtow(ptrvar, "=", NULL);
 
-if (ptr == NULL)
+if (tptr == NULL)
 return (NULL);
 
-name = _strdup(ptr[0]);
-freeArgument(ptr);
-ptr = NULL;
+name = _strdup(tptr[0]);
+freeArgument(tptr);
+tptr = NULL;
 
 return (name);
 }
 
-char *EnvValue(char *ptrvar)
-{
-char **ptr, *name;
-ptr = _strtow(ptrvar, "=", NULL);
+/**
+ * _EnvValue - return environ value
+ * @ptrVariable: name
+ *
+ * Return: environ value
+ */
 
-if (ptr == NULL)
+char *EnvValue(char *ptrvariable)
+{
+char **cptr, *name;
+
+cptr = _strtow(ptrvariable, "=", NULL);
+
+if (cptr == NULL)
 return(NULL);
 
-ptr = _strdup(ptr[1]);
-freeArgument(ptr);
-ptr = NULL;
+name = _strdup(cptr[1]);
+freeArgument(cptr);
+cptr = NULL;
 
 return (name);
 }

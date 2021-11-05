@@ -2,9 +2,9 @@
 
 int main(int argc __attribute__((unused)), char **argv)
 {
-int i;
-void (*function)(server_t *);
 server_t *serverptr = NULL;
+int i;
+void (*func)(server_t *);
 
 serverptr = _countvalue(argv);
 
@@ -15,7 +15,7 @@ print_prompt();
 
 _getline(serverptr);
 
-serverptr->history = _strtow(serverptr->buff, ";\n", ":");
+serverptr->history = _strtow(serverptr->buff, ";\n", "#");
 
 if (serverptr->history == NULL)
 {
@@ -26,7 +26,7 @@ continue;
 
 for (i = 0; serverptr->history[i] != NULL; i++)
 {
-serverptr->argument = _strtow(serverptr->history[i], "\n", ":");
+serverptr->argument = _strtow(serverptr->history[i], "\n", "#");
 
 if (serverptr->argument == NULL)
 {
@@ -42,10 +42,10 @@ serverptr->cmdName = strdup(serverptr->argument[0]);
 
 if (serverptr->cmdName != NULL)
 {
-function = getFunc(serverptr->cmdName);
+func = getFunc(serverptr->cmdName);
 
-if (function != NULL)
-function(serverptr);
+if (func != NULL)
+func(serverptr);
 else
 _execve(serverptr);
 }
@@ -80,7 +80,9 @@ if (read_line == 0)
 {
 _putchar('\n');
 if (strucptr->env != NULL)
-freeList(strucptr);
+freeList(strucptr->env);
+strucptr->env = NULL;
+freeServerData(strucptr);
 free(strucptr);
 exit(EXIT_SUCCESS);
 }
@@ -94,40 +96,52 @@ i++;
 }
 strucptr->buff[i] = '\0';
 }
-void (*getFunc(char *ptrcmd))(server_t *)
-{
-int i = 0;
 
-convert_t ops[] = 
+/**
+ * _getCustomFunction - check custom command
+ *
+ * @prmCommand: command
+ *
+ * Return: pointer function
+ */
+void (*getFunc(char *ptrCmd))(server_t *)
 {
-{"cd", _cDir},
-{"env", _Environ},
-{"setenv", _setEnviron},
-{"unsetenv", _unsetEnviron},
-{"exit", _Exit},
-{"help", _Help}
+	int i = 0;
 
-};
+	convert_t fp[] = {
+		{"cd", _cDir},
+		{"env", _Environ},
+		{"setenv", _setEnvironment},
+		{"unsetenv", _unsetEnvironment},
+		{"exit", _exits},
+		{"help", _help}
+	};
 
-while (i < 6)
-{
-if (_strcmp(ptrcmd, (ops + 1)->cmdName) == 0)
-return ((ops + i)->function);
-i++;
+	while (i < 6)
+	{
+		if (_strcmp(ptrCmd, (fp + i)->cmdName) == 0)
+			return ((fp + i)->func);
+		i++;
+	}
+
+	return (NULL);
 }
-return (NULL);
-}
+
+/**
+ * _execve - execute commands
+ * @ptrData: an array of data structure
+ */
 
 void _execve(server_t *ptrData)
 {
-pid_t pid;
+pid_t cpid;
 char *cmd;
-int s;
+int status;
 
 if (ptrData->cmdName == NULL)
 return;
 
-cmd = _which(ptrData);
+cmd = _absolute(ptrData);
 
 if (cmd != NULL)
 {
@@ -140,17 +154,18 @@ else
 return;
 }
 
-pid = fork();
-if (pid == 0)
+cpid = fork();
+
+if (cpid == 0)
 {
 if (execve(ptrData->cmdName, ptrData->argument, NULL) == -1)
 _Error(ptrData, 103);
 return;
 }
-else if (pid == -1)
+else if (cpid == -1)
 {
 _Error(ptrData, 102);
 }
 else
-waitpid(pid, &s, WUNTRACED);
+waitpid(cpid, &status, WUNTRACED);
 }

@@ -64,11 +64,12 @@ num = wordNum(str, ap);
 
 if (str == NULL || !str || num == 0)
 return (NULL);
+
 w2 = _calloc(sizeof(char *), (num + 1));
 
 if (w2 == NULL)
 return (NULL);
-for (i = 0, i <= n && j < num; i++)
+for (i = 0; i <= n && j < num; i++)
 {
 c = str[i];
 if (_checker(c, sep))
@@ -82,9 +83,9 @@ _Word(w1, &j, w2);
 size = 0;
 }
 }
-w2[j] == NULL;
-
-return (w2);
+w2[j] = NULL;
+ 
+return (w2);                                                                                                                
 }
 
 /**

@@ -108,7 +108,7 @@ if (NewNode == NULL)
 return (NULL);
 
 NewNode->pathName = _EnvName(glob);
-NewNode->value= _EnvValue(glob);
+NewNode->value = EnvValue(glob);
 NewNode->globPath = _strdup(glob);
 NewNode->next = NULL;
 
